@@ -1,0 +1,20 @@
+[build]
+  command = "cd backend && npm install"
+  functions = "backend"
+  publish = "."
+
+[[redirects]]
+  from = "/admin"
+  to = "/earnify-admin.html"
+  status = 200
+
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/server/api/:splat"
+  status = 200
+
+
+[functions]
+  node_bundler = "esbuild"
+  external_node_modules = ["firebase-admin"]
+  included_files = ["backend/serviceAccountKey.json"]

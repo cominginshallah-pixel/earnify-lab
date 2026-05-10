@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Earnify Lab — AI-Powered Investment Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Noto+Nastaliq+Urdu:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --p:#7C3AED;--p2:#9F5FFF;--p3:#5B21B6;--pdim:rgba(124,58,237,0.12);--pglow:rgba(124,58,237,0.3);
+  --a:#00E5B0;--adim:rgba(0,229,176,0.1);--aglow:rgba(0,229,176,0.25);
+  --gold:#FFB800;--gdim:rgba(255,184,0,0.1);
+  --red:#FF4565;--rdim:rgba(255,69,101,0.1);
+  --blue:#38BDF8;--bdim:rgba(56,189,248,0.1);
+  --bg:#05060F;--s1:#0B0D17;--s2:#10131E;--s3:#161926;--s4:#1C2030;
+  --bd:rgba(255,255,255,0.08);--bdp:rgba(124,58,237,0.2);--bda:rgba(0,229,176,0.18);
+  --t1:#F0EEFF;--t2:#94A3B8;--t3:#3A3A5A;
+  --r:20px;--r2:14px;--r3:10px;
+}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--t1);min-height:100vh;overflow-x:hidden}
+.urdu{font-family:'Noto Nastaliq Urdu',serif;direction:rtl}
+a{text-decoration:none;color:inherit}
+button{cursor:pointer;font-family:inherit;transition:all .2s}
+
+/* ── UI COMPONENTS ── */
+.screen{display:none;min-height:100vh;animation:fadeIn .4s ease-out}
+.screen.on{display:flex}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+.ov{position:fixed;inset:0;background:rgba(2,3,8,.85);backdrop-filter:blur(12px);z-index:1000;display:none;align-items:center;justify-content:center;padding:20px}
+.ov.on{display:flex}
+.abox{background:var(--s1);width:100%;max-width:440px;border-radius:var(--r);border:1px solid var(--bd);padding:35px;position:relative;box-shadow:0 20px 50px rgba(0,0,0,0.5)}
+.xb{position:absolute;top:20px;right:20px;background:none;border:none;color:var(--t3);font-size:20px}
+
+.card{background:var(--s1);border:1px solid var(--bd);border-radius:var(--r);padding:24px;position:relative;overflow:hidden}
+.chd{font-size:12px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.bv{font-size:28px;font-weight:900;letter-spacing:-1px}
+.up{color:var(--a)} .dn{color:var(--red)} .pc{color:var(--p2)} .gc{color:var(--gold)}
+
+.badge{padding:4px 10px;border-radius:6px;font-size:10px;font-weight:800;text-transform:uppercase}
+.bg{background:var(--adim);color:var(--a)} .br{background:var(--rdim);color:var(--red)} .bb{background:var(--bdim);color:var(--blue)} .by{background:var(--gdim);color:var(--gold)} .bx{background:var(--s3);color:var(--t3)}
+
+/* ── SIDEBAR ── */
+.sidebar{width:245px;background:var(--s1);border-right:1px solid var(--bd);height:100vh;position:fixed;left:0;top:0;display:flex;flex-direction:column;padding:24px;z-index:100}
+.sb-brand{display:flex;align-items:center;gap:12px;margin-bottom:40px;padding-left:8px}
+.sb-logo-ic{width:38px;height:38px;background:linear-gradient(135deg,var(--p),var(--p2));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;color:#fff;box-shadow:0 0 20px var(--pglow)}
+.sb-brand-name{font-weight:900;font-size:20px;letter-spacing:-0.5px}
+.sb-brand-name span{color:var(--p2)}
+
+.sb-nav{display:flex;flex-direction:column;gap:6px;flex:1}
+.na{display:flex;align-items:center;gap:14px;padding:12px 16px;border-radius:12px;color:var(--t2);font-weight:600;font-size:14px}
+.na i{font-size:18px;width:24px;text-align:center}
+.na:hover{background:var(--s2);color:var(--t1)}
+.na.on{background:var(--pdim);color:var(--p2);box-shadow:inset 0 0 0 1px var(--bdp)}
+
+.sb-foot{margin-top:auto;padding-top:20px;border-top:1px solid var(--bd)}
+.sb-u{display:flex;align-items:center;gap:12px;padding:10px}
+.sb-av{width:40px;height:40px;border-radius:50%;background:var(--s3);border:1px solid var(--bd);display:flex;align-items:center;justify-content:center;font-weight:800;color:var(--p2)}
+.sb-unm{font-weight:700;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sb-ubl{font-size:11px;color:var(--t2);margin-top:2px}
+.sb-out{margin-left:auto;background:none;border:none;color:var(--t3);cursor:pointer;font-size:13px;width:26px;height:26px;display:flex;align-items:center;justify-content:center;border-radius:6px}
+.sb-out:hover{color:var(--red);background:var(--rdim)}
+
+.main{margin-left:245px;flex:1;padding:24px 28px;min-height:100vh;transition:margin 0.3s}
+.pg{display:none}
+.pg.on{display:block}
+.pghd{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px}
+
+/* MOBILE TOGGLE */
+.mob-bar{display:none;position:fixed;top:0;left:0;right:0;height:60px;background:var(--s1);border-bottom:1px solid var(--bd);z-index:90;padding:0 20px;align-items:center;justify-content:space-between}
+.mob-toggle{background:none;border:none;color:var(--t1);font-size:22px;cursor:pointer}
+
+@media(max-width:992px){
+  .sidebar{transform:translateX(-100%);transition:transform 0.3s}
+  .sidebar.on{transform:translateX(0)}
+  .main{margin-left:0;padding:80px 15px 40px}
+  .mob-bar{display:flex}
+  .g4,.g3,.g2{grid-template-columns:1fr 1fr;gap:10px}
+  .land-h{font-size:38px}
+  .land-u{font-size:16px}
+  .land-p{font-size:14px}
+  .stats-row{grid-template-columns:1fr 1fr}
+}
+@media(max-width:600px){
+  .g4,.g3,.g2,.stats-row{grid-template-columns:1fr}
+  .plans-g{grid-template-columns:1fr}
+  .abox{width:95%;padding:25px}
+}
+
+.pghd-l h1{font-size:22px;font-weight:900;letter-spacing:-0.5px;display:flex;align-items:center;gap:10px}
+.pghd-l h1 i{font-size:18px}
+.pghd-l .sub{font-size:13px;color:var(--t2);margin-top:3px}
+
+/* ── GRIDS ── */
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-bottom:24px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+
+/* ── BUTTONS ── */
+.btn-main{background:linear-gradient(to right,var(--p),var(--p2));color:#fff;border:none;padding:12px 24px;border-radius:12px;font-weight:700;display:inline-flex;align-items:center;gap:10px;box-shadow:0 10px 25px var(--pglow)}
+.btn-main:hover{transform:translateY(-2px);box-shadow:0 15px 30px var(--pglow)}
+.btn-sec{background:var(--s2);color:var(--t1);border:1px solid var(--bd);padding:12px 24px;border-radius:12px;font-weight:700;display:inline-flex;align-items:center;gap:10px}
+.btn-sec:hover{background:var(--s3)}
+
+/* ── FORMS ── */
+.fld{margin-bottom:18px}
+.fld label{display:block;font-size:12px;font-weight:700;color:var(--t2);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px}
+.fld input,.fld select{width:100%;background:var(--s2);border:1px solid var(--bd);color:var(--t1);padding:14px 18px;border-radius:12px;font-family:inherit;font-size:15px}
+.fld input:focus{border-color:var(--bdp);outline:none;background:var(--s3)}
+
+/* ── LANDING ── */
+#land{background:#020308;position:relative;overflow:hidden;align-items:center;justify-content:center;text-align:center;padding:40px 20px}
+.bg-mesh{position:absolute;inset:0;background:radial-gradient(circle at 20% 30%,rgba(124,58,237,0.15) 0%,transparent 50%),radial-gradient(circle at 80% 70%,rgba(0,229,176,0.1) 0%,transparent 50%)}
+.grid-lines{position:absolute;inset:0;background-image:linear-gradient(var(--bd) 1px,transparent 1px),linear-gradient(90deg,var(--bd) 1px,transparent 1px);background-size:60px 60px;opacity:0.2}
+.land-z{position:relative;z-index:10;max-width:800px}
+.brand-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,0.05);padding:8px 16px;border-radius:30px;font-size:12px;font-weight:700;margin-bottom:30px;border:1px solid var(--bd)}
+.land-logo{display:flex;align-items:center;justify-content:center;gap:15px;margin-bottom:20px}
+.logo-icon{width:60px;height:60px;background:linear-gradient(135deg,var(--p),var(--p2));border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:28px;color:#fff;box-shadow:0 0 30px var(--pglow)}
+.logo-txt{font-size:32px;font-weight:900;letter-spacing:-1px}
+.logo-txt span{color:var(--p2)}
+.land-h{font-size:64px;font-weight:900;line-height:1;margin-bottom:20px;letter-spacing:-2px}
+.land-h .hi{background:linear-gradient(to right,var(--p2),var(--a));-webkit-background-clip:text;background-clip:text;color:transparent}
+.land-u{font-size:22px;margin-bottom:20px;color:var(--t2)}
+.land-p{font-size:16px;color:var(--t2);line-height:1.6;margin-bottom:40px}
+.land-btns{display:flex;gap:15px;justify-content:center;margin-bottom:60px}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;max-width:900px;margin:0 auto}
+.stat-lc{background:rgba(255,255,255,0.03);border:1px solid var(--bd);padding:20px;border-radius:20px;backdrop-filter:blur(10px)}
+.stat-lc .ic{font-size:24px;margin-bottom:10px}
+.stat-lc .vl{font-size:24px;font-weight:900}
+.stat-lc .lb{font-size:12px;color:var(--t3);text-transform:uppercase;font-weight:700;margin-top:4px}
+
+/* ── AUTH BOX ── */
+.atabs{display:flex;background:var(--s2);padding:4px;border-radius:12px;margin-bottom:25px}
+.atab{flex:1;padding:10px;text-align:center;font-size:14px;font-weight:700;color:var(--t3);border-radius:8px}
+.atab.on{background:var(--s1);color:var(--p2);box-shadow:0 4px 12px rgba(0,0,0,0.2)}
+.btn-auth{width:100%;justify-content:center;margin-top:10px}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:26px;right:26px;background:var(--s2);border:1px solid var(--bdp);border-radius:var(--r2);padding:14px 20px;font-size:13px;font-weight:600;z-index:9999;transform:translateY(80px);opacity:0;transition:all .3s;display:flex;align-items:center;gap:10px;max-width:320px;box-shadow:0 8px 32px var(--pglow)}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.ok{border-color:var(--bda);color:var(--a)}
+.toast.err{border-color:rgba(255,69,101,.4);color:var(--red)}
+
+/* ── TABLE ── */
+.tbl{background:var(--s1);border:1px solid var(--bd);border-radius:var(--r);overflow:hidden}
+.thd{display:grid;background:var(--s2);padding:12px 20px;font-size:11px;font-weight:800;color:var(--t3);text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid var(--bd)}
+.tr{display:grid;padding:16px 20px;border-bottom:1px solid var(--bd);align-items:center;font-size:13px}
+.tr:last-child{border:none}
+</style>
+</head>
+<body>
+<script>
+  // ══════════════════════════════════════
+  // Standalone API Layer (Embedded)
+  // ══════════════════════════════════════
+  const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.hostname === '') 
+    ? 'http://localhost:5005/api' 
+    : '/api';
+
+  const apiCall = async (path, opts = {}) => {
+    try {
+      const res = await fetch(`${API_BASE}${path}`, {
+        ...opts,
+        headers: { 'Content-Type': 'application/json', ...opts.headers }
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Server Error');
+      return data;
+    } catch (err) { console.error('API Error:', err); throw err; }
+  };
+  const api = {
+    login: (email, password) => apiCall('/auth/login', { method: 'POST', body: JSON.stringify({ email, password }) }),
+    register: (userData) => apiCall('/auth/register', { method: 'POST', body: JSON.stringify(userData) }),
+    fetchProfile: (userId) => apiCall(`/profile/${userId}`),
+    upsertProfile: (data) => apiCall('/profile', { method: 'POST', body: JSON.stringify(data) }),
+    createInvestment: (data) => apiCall('/investments', { method: 'POST', body: JSON.stringify(data) }),
+    fetchUserInvestments: (userId) => apiCall(`/investments/${userId}`),
+    createDeposit: (data) => apiCall('/deposits', { method: 'POST', body: JSON.stringify(data) }),
+    createWithdrawal: (data) => apiCall('/withdrawals', { method: 'POST', body: JSON.stringify(data) }),
+    saveTrade: (data) => apiCall('/trades', { method: 'POST', body: JSON.stringify(data) }),
+    fetchNotifs: (userId) => apiCall(`/notifications/${userId}`),
+    doCheckin: (userId) => apiCall('/tasks/checkin', { method: 'POST', body: JSON.stringify({ userId }) }),
+    completeTask: (data) => apiCall('/tasks/complete', { method: 'POST', body: JSON.stringify(data) }),
+    checkHealth: () => apiCall('/health')
+  };
+
+  // UI HELPERS (Global)
+  window.toggleSB = () => document.getElementById('sidebar').classList.toggle('on');
+  window.openAuth = (t) => { document.getElementById('auth-ov').classList.add('on'); swTab(t); };
+  window.closeAuth = () => { document.getElementById('auth-ov').classList.remove('on'); };
+  window.swTab = (t) => {
+    const fl = document.getElementById('fl'), fr = document.getElementById('fr');
+    const tl = document.getElementById('tl'), tr = document.getElementById('tr');
+    if (fl && fr) { fl.style.display = t === 'l' ? 'block' : 'none'; fr.style.display = t === 'r' ? 'block' : 'none'; }
+    if (tl && tr) { tl.className = 'atab' + (t === 'l' ? ' on' : ''); tr.className = 'atab' + (t === 'r' ? ' on' : ''); }
+  };
+
+  // ══════════════════════════════════════
+  // STATE
+  // ══════════════════════════════════════
+  const S = {
+    userId: null,
+    user: { name: 'Guest', bal: 0, code: 'N/A', email: '' },
+    investments: [],
+    trades: [],
+    plan: { name: '', rate: '', months: 0, rateN: 0 },
+    selPM: 'EasyPaisa',
+    aiRunning: false,
+    aiTotPnl: 0,
+    selPair: 'BTC/USDT',
+  };
+  const PAIRS = { 'BTC/USDT': 43215, 'ETH/USDT': 2850, 'EUR/USD': 1.0850, 'GBP/USD': 1.2650, 'XAU/USD': 2320 };
+  let priceHistory = [], signalHistory = [];
+
+
+  // ══════════════════════════════════════
+  // CORE FUNCTIONS
+  // ══════════════════════════════════════
+  window.doLogin = async () => {
+    if (!api) { toast('Connecting...', 'ok'); return; }
+    const email = document.getElementById('lem').value.trim();
+    const pass = document.getElementById('lpw').value;
+    if (!email || !pass) { toast('Details missing!', 'err'); return; }
+    try {
+      const res = await api.login(email, pass);
+      await startApp(res.user);
+      toast('Login Successful!', 'ok');
+    } catch (err) { toast(err.message, 'err'); }
+  };
+
+  window.doReg = async () => {
+    const n = document.getElementById('rnm').value.trim();
+    const e = document.getElementById('rem').value.trim();
+    const p = document.getElementById('rpw').value;
+    if (!n || !e || !p) { toast('Details missing!', 'err'); return; }
+    try {
+      const res = await api.register({ full_name: n, email: e, password: p, phone: document.getElementById('rph').value, referral_code: document.getElementById('rref').value });
+      await startApp(res.user);
+      toast('Account created!', 'ok');
+    } catch (err) { toast(err.message, 'err'); }
+  };
+
+  window.startApp = async (user) => {
+    S.userId = user.id;
+    S.user = { name: user.full_name, bal: parseFloat(user.balance), email: user.email, code: user.referral_code || 'REF-' + user.id.slice(0, 4).toUpperCase(), active: !!user.active };
+    localStorage.setItem('earnify_session', JSON.stringify({ user }));
+    
+    // Activation Check
+    const actCard = document.getElementById('activation-card');
+    if(actCard) actCard.style.display = S.user.active ? 'none' : 'block';
+
+    const ini = S.user.name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+
+    closeAuth();
+    document.getElementById('land').classList.remove('on');
+    document.getElementById('app').classList.add('on');
+    const av = document.getElementById('sbav'); if(av) av.textContent = ini;
+    const nm = document.getElementById('sbnm'); if(nm) nm.textContent = S.user.name;
+
+    // Profile Page Sync
+    const pn = document.getElementById('p-name'); if(pn) pn.textContent = S.user.name;
+    const pe = document.getElementById('p-email'); if(pe) pe.textContent = S.user.email;
+    const pav = document.getElementById('p-av'); if(pav) pav.textContent = ini;
+    const pcd = document.getElementById('p-code'); if(pcd) pcd.textContent = S.user.code;
+    const un = document.getElementById('up-name'); if(un) un.value = S.user.name;
+
+    await syncUserData();
+    updateUI();
+  };
+
+  window.updateProfile = async () => {
+    const n = document.getElementById('up-name').value.trim();
+    const ph = document.getElementById('up-phone').value.trim();
+    if(!n) return toast('Name required', 'err');
+    try {
+      await api.upsertProfile({ id: S.userId, full_name: n, phone: ph });
+      S.user.name = n;
+      toast('Profile updated!', 'ok');
+      startApp({ id: S.userId, full_name: n, email: S.user.email, balance: S.user.bal, referral_code: S.user.code });
+    } catch (err) { toast(err.message, 'err'); }
+  };
+
+
+  window.doLogout = () => {
+    if (S.aiRunning) stopAI();
+    localStorage.removeItem('earnify_session');
+    location.reload();
+  };
+
+  window.goPg = (id, el) => {
+    document.querySelectorAll('.pg').forEach(p => p.classList.remove('on'));
+    document.querySelectorAll('.na').forEach(a => a.classList.remove('on'));
+    const pg = document.getElementById('pg-' + id); if(pg) pg.classList.add('on');
+    if (el) el.classList.add('on');
+    if (id === 'txns') renderTxns();
+    if (window.innerWidth <= 992) toggleSB();
+  };
+
+  window.syncUserData = async () => {
+    if (!S.userId || !api) return;
+    try {
+      const profile = await api.fetchProfile(S.userId);
+      S.user.bal = parseFloat(profile.balance);
+      S.user.earned = parseFloat(profile.total_earned || 0);
+      S.user.active = !!profile.active;
+      
+      const actCard = document.getElementById('activation-card');
+      if(actCard) actCard.style.display = S.user.active ? 'none' : 'block';
+
+      S.investments = await api.fetchUserInvestments(S.userId);
+      updateUI();
+    } catch (err) { console.error('Sync error:', err); }
+
+  };
+
+  window.updateUI = () => {
+    const balStr = '\u20A8 ' + S.user.bal.toLocaleString();
+    const ernStr = '\u20A8 ' + (S.user.earned || 0).toLocaleString();
+    const setT = (id, txt) => { const el = document.getElementById(id); if(el) el.textContent = txt; };
+    setT('sbbl', balStr);
+    setT('dwal', balStr);
+    setT('dprof', ernStr);
+    setT('mycode', S.user.code);
+    setT('w-avail-bal', balStr);
+    const dinv = document.getElementById('dinv');
+
+    if (dinv) {
+      const totalInv = S.investments.reduce((a, b) => a + parseFloat(b.amount), 0);
+      dinv.textContent = '\u20A8 ' + totalInv.toLocaleString();
+    }
+    const reflink = document.getElementById('reflink');
+    if (reflink) reflink.value = 'https://earnifylab.pk/ref/' + S.user.code;
+    renderDashboardInvestments();
+    renderTxns();
+  };
+
+  window.toast = (msg, type = 'ok') => {
+    const t = document.getElementById('toast'), tm = document.getElementById('tmsg');
+    if(!t) return;
+    tm.textContent = msg; t.className = 'toast show ' + (type === 'err' ? 'err' : 'ok');
+    setTimeout(() => t.className = 'toast', 3000);
+  };
+
+  window.openInv = (nm, rate, dur, rN, months) => {
+    S.plan = { name: nm, rate, months, rateN: rN };
+    document.getElementById('inm').innerHTML = '<i class="fa-solid fa-gem" style="color:var(--a)"></i> ' + nm + ' Plan';
+    document.getElementById('isub').textContent = rate + ' return · ' + dur;
+    document.getElementById('iamt').value = '';
+    document.getElementById('rtot').textContent = '\u20A8 0';
+    document.getElementById('inv-ov').classList.add('on');
+  };
+  window.closeInv = () => { document.getElementById('inv-ov').classList.remove('on'); };
+  window.calcR = () => {
+    const a = parseFloat(document.getElementById('iamt').value) || 0;
+    const tot = a + (a * S.plan.rateN * S.plan.months);
+    document.getElementById('rtot').textContent = '\u20A8 ' + Math.round(tot).toLocaleString();
+  };
+  window.goDep = () => {
+    const a = parseFloat(document.getElementById('iamt').value) || 0;
+    if (a <= 0) { toast('Amount!', 'err'); return; }
+    document.getElementById('damt').value = a;
+    closeInv(); goPg('deposit');
+  };
+  window.selPM = (el, nm, num) => {
+    document.querySelectorAll('.pm').forEach(p => p.classList.remove('on'));
+    el.classList.add('on'); S.selPM = nm;
+    document.getElementById('sel-m').textContent = nm;
+    document.getElementById('sel-n').textContent = num;
+  };
+  window.copyNum = () => { navigator.clipboard.writeText('03317043890').then(() => toast('Copied!', 'ok')); };
+  window.prevSS = (e) => {
+    const f = e.target.files[0]; if (!f) return;
+    const r = new FileReader();
+    r.onload = ev => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const max = 800; let w = img.width, h = img.height;
+        if (w > h) { if (w > max) { h *= max/w; w = max; } } else { if (h > max) { w *= max/h; h = max; } }
+        canvas.width = w; canvas.height = h;
+        const ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0, w, h);
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.6);
+        document.getElementById('ss-prev').src = dataUrl;
+        document.getElementById('ss-prev').style.display = 'block';
+      };
+      img.src = ev.target.result;
+    }; r.readAsDataURL(f);
+  };
+  window.startAI = () => {
+    if(!S.user.active) { toast('Activate account first!', 'err'); goPg('dash'); return; }
+    const amt = parseFloat(document.getElementById('trade-input').value);
+    const risk = document.getElementById('trade-risk').value;
+    const time = document.getElementById('trade-time').value;
+
+    if (!amt || amt < 500) { toast('Min \u20A8500!', 'err'); return; }
+    if (amt > S.user.bal) { toast('Low balance!', 'err'); return; }
+    
+    S.aiRunning = true; S.aiTotPnl = 0; S.user.bal -= amt; updateUI();
+    document.getElementById('trade-active-amt').innerText = `\u20A8 ${amt}`;
+    document.getElementById('ai-controls').style.display = 'none';
+    document.getElementById('ai-running').style.display = 'block';
+    document.getElementById('ai-status-badge').className = 'badge bg';
+    document.getElementById('ai-status-badge').innerHTML = '<i class="fa-solid fa-circle"></i> Live';
+    
+    // Risk Multiplier
+    const riskMult = risk === 'high' ? 1.5 : (risk === 'low' ? 0.6 : 1);
+    const basePrice = PAIRS[S.selPair] || 43000;
+    if (!priceHistory.length) for (let i = 0; i < 60; i++) priceHistory.push(basePrice + Math.random() * (basePrice * 0.01));
+    
+    S.aiChartInterval = setInterval(() => {
+      const last = priceHistory[priceHistory.length - 1];
+      const volatility = risk === 'high' ? 0.005 : 0.002;
+      priceHistory.push(last + (Math.random() - 0.5) * (basePrice * volatility));
+      if (priceHistory.length > 60) priceHistory.shift();
+      const lp = document.getElementById('live-price'); 
+      if(lp) {
+        lp.textContent = (S.selPair.includes('USDT') || S.selPair.includes('USD')) ? `$${priceHistory[priceHistory.length - 1].toFixed(2)}` : priceHistory[priceHistory.length - 1].toFixed(5);
+        lp.style.color = S.aiTotPnl >= 0 ? 'var(--a)' : 'var(--red)';
+      }
+      drawChart();
+    }, 2000);
+
+    S.aiInterval = setInterval(() => {
+      const move = (Math.random() - 0.45) * 5 * riskMult;
+      const gain = (amt * move) / 1000; S.aiTotPnl += gain;
+      const pnlEl = document.getElementById('session-pnl');
+      if(pnlEl) { 
+        pnlEl.innerText = `${S.aiTotPnl >= 0 ? '+' : ''}\u20A8 ${S.aiTotPnl.toFixed(2)}`; 
+        pnlEl.className = 'bv ' + (S.aiTotPnl >= 0 ? 'up' : 'dn'); 
+      }
+      
+      // Log Entry
+      const log = document.getElementById('trade-log-body');
+      if(log) {
+        if(log.textContent.includes('Waiting')) log.innerHTML = '';
+        const entry = document.createElement('div');
+        entry.style.cssText = 'padding:8px; border-bottom:1px solid var(--bd); display:flex; justify-content:space-between; animation: slideIn 0.3s ease-out';
+        entry.innerHTML = `<span>${S.selPair} Execute (${time})</span><span class="${S.aiTotPnl >= 0 ? 'up' : 'dn'}">${S.aiTotPnl >= 0 ? 'PROFIT' : 'RETRACING'}</span>`;
+        log.prepend(entry);
+      }
+    }, 5000);
+  };
+
+
+  window.stopAI = async () => {
+    clearInterval(S.aiInterval); clearInterval(S.aiChartInterval);
+    const amt = parseFloat(document.getElementById('trade-input').value);
+    S.user.bal += (amt + S.aiTotPnl); S.aiRunning = false;
+    document.getElementById('ai-controls').style.display = 'block';
+    document.getElementById('ai-running').style.display = 'none';
+    document.getElementById('ai-status-badge').className = 'badge by';
+    document.getElementById('ai-status-badge').textContent = 'Offline';
+    
+    try { 
+      await api.saveTrade({ userId: S.userId, pair: S.selPair, amount: amt, pnl: S.aiTotPnl, win: S.aiTotPnl >= 0, direction: 'AI' }); 
+      await api.upsertProfile({ id: S.userId, balance: S.user.bal }); 
+    } catch (e) {}
+
+    updateUI();
+  };
+
+  function drawChart() {
+    const canvas = document.getElementById('trade-canvas'); if (!canvas) return;
+    const ctx = canvas.getContext('2d'); const W = canvas.offsetWidth, H = canvas.offsetHeight;
+    canvas.width = W; canvas.height = H; ctx.clearRect(0, 0, W, H);
+    if (priceHistory.length < 2) return;
+    const min = Math.min(...priceHistory), max = Math.max(...priceHistory), range = max - min || 1, pad = 60;
+    
+    const color = S.aiTotPnl >= 0 ? '#00E5B0' : '#FF3B30';
+    const fill = S.aiTotPnl >= 0 ? 'rgba(0, 229, 176, 0.2)' : 'rgba(255, 59, 48, 0.2)';
+    
+    const grad = ctx.createLinearGradient(0, pad, 0, H);
+    grad.addColorStop(0, fill);
+    grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+    
+    ctx.beginPath(); ctx.moveTo(0, H);
+    priceHistory.forEach((p, i) => {
+      const x = (i / (priceHistory.length - 1)) * W;
+      const y = H - ((p - min) / range) * (H - pad * 2) - pad;
+      ctx.lineTo(x, y);
+    });
+    ctx.lineTo(W, H); ctx.fillStyle = grad; ctx.fill();
+
+    ctx.beginPath(); ctx.strokeStyle = color; ctx.lineWidth = 4; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    priceHistory.forEach((p, i) => {
+      const x = (i / (priceHistory.length - 1)) * W;
+      const y = H - ((p - min) / range) * (H - pad * 2) - pad;
+      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    });
+    ctx.stroke();
+
+    const lastX = W, lastY = H - ((priceHistory[priceHistory.length-1] - min) / range) * (H - pad * 2) - pad;
+    ctx.beginPath(); ctx.fillStyle = color; ctx.arc(lastX - 5, lastY, 6, 0, Math.PI * 2); ctx.fill();
+  }
+
+  window.setTA = (a) => document.getElementById('trade-input').value = a;
+
+  // --- DEPOSITS ---
+  window.subDep = async () => {
+    const amt = parseFloat(document.getElementById('damt').value);
+    const txn = document.getElementById('dtxn').value.trim();
+    const img = document.getElementById('ss-prev').src;
+    if (!amt || !txn || img.includes('placeholder')) { toast('Sab details bharo aur screenshot upload karo!', 'err'); return; }
+    try {
+      await api.createDeposit({ userId: S.userId, amount: amt, method: S.selPM, txnId: txn, screenshot: img });
+      toast('Deposit submitted! Processing...', 'ok');
+      goPg('dash');
+      setTimeout(syncUserData, 2000);
+    } catch (err) { toast(err.message, 'err'); }
+  };
+
+  // --- WITHDRAWALS ---
+  window.openWD = () => { document.getElementById('wd-ov').classList.add('on'); };
+  window.closeWD = () => { document.getElementById('wd-ov').classList.remove('on'); };
+  window.submitWithdrawal = async () => {
+    const amt = parseFloat(document.getElementById('wamt').value);
+    const meth = document.getElementById('wmeth').value;
+    const acc = document.getElementById('wacc').value.trim();
+    const name = document.getElementById('wnm').value.trim();
+    if (amt < 500) { toast('Minimum withdrawal ₨500!', 'err'); return; }
+    if (amt > S.user.bal) { toast('Insufficient balance!', 'err'); return; }
+    if (!acc || !name) { toast('Account details missing!', 'err'); return; }
+    try {
+      await api.createWithdrawal({ userId: S.userId, amount: amt, method: meth, details: `${name} (${acc})` });
+      toast('Withdrawal requested successfully!', 'ok');
+      closeWD();
+      setTimeout(syncUserData, 2000);
+    } catch (err) { toast(err.message, 'err'); }
+  };
+
+
+
+  // --- TASKS & CHECKIN ---
+  window.doCheckin = async () => {
+    try {
+      const res = await api.doCheckin(S.userId);
+      toast(`Daily bonus claimed! +₨${res.reward}`, 'ok');
+      await syncUserData();
+    } catch (err) { toast(err.message, 'err'); }
+  };
+
+  window.doTask = async (id, reward, link) => {
+    window.open(link, '_blank');
+    toast('Task link opened! Complete and click Done.', 'ok');
+    setTimeout(async () => {
+      if (confirm('Did you complete the task correctly?')) {
+        try {
+          await api.completeTask({ userId: S.userId, taskId: id, reward });
+          toast(`Task completed! +₨${reward} added.`, 'ok');
+          await syncUserData();
+        } catch (err) { toast(err.message, 'err'); }
+      }
+    }, 5000);
+  };
+
+  window.openNotifs = async () => {
+    document.getElementById('notif-ov').classList.add('on');
+    const body = document.getElementById('notif-body');
+    body.innerHTML = '<div style="padding:20px;text-align:center">Loading...</div>';
+    try {
+      const notifs = await api.fetchNotifs(S.userId);
+      body.innerHTML = notifs.length ? '' : '<p style="text-align:center;color:var(--t2)">No new alerts.</p>';
+      notifs.forEach(n => {
+        const d = document.createElement('div');
+        d.style.cssText = 'padding:12px; background:var(--s2); border-radius:10px; margin-bottom:8px; border-left:3px solid var(--p2)';
+        d.innerHTML = `<div style="font-weight:700;font-size:13px">${n.title}</div><div style="font-size:11px;color:var(--t2);margin-top:2px">${n.msg}</div>`;
+        body.appendChild(d);
+      });
+    } catch (e) { body.innerHTML = 'Error loading alerts.'; }
+  };
+  window.closeNotifs = () => document.getElementById('notif-ov').classList.remove('on');
+</script>
+
+
+
+
+<div class="bg-mesh"></div>
+<div class="grid-lines"></div>
+
+<!-- ══════════ LANDING ══════════ -->
+<div class="screen on" id="land">
+<div class="land-z">
+  <div class="brand-badge"><span class="dot"></span> Pakistan's #1 AI Investment Lab</div>
+  <div class="land-logo">
+    <div class="logo-icon"><i class="fa-solid fa-flask-vial"></i></div>
+    <div class="logo-txt">Earnify <span>Lab</span></div>
+  </div>
+  <h1 class="land-h">Invest Smart.<br><span class="hi">Earn Faster.</span></h1>
+  <div class="land-u urdu">پیسہ لگائیں — AI ٹریڈنگ سے زیادہ کمائیں</div>
+  <p class="land-p">AI-powered trading • 3 investment plans • <strong style="color:var(--a)">₨400 per referral</strong><br>EasyPaisa · JazzCash · Weekly withdrawal every Monday</p>
+  <div class="land-btns">
+    <button class="btn-main" onclick="openAuth('reg')"><i class="fa-solid fa-rocket"></i> Start Earning ابھی</button>
+    <button class="btn-sec" onclick="openAuth('log')"><i class="fa-solid fa-right-to-bracket"></i> Login / لاگ ان</button>
+  </div>
+  <div class="stats-row">
+    <div class="stat-lc"><div class="ic">💰</div><div class="vl">₨24Cr+</div><div class="lb">Total Invested</div></div>
+    <div class="stat-lc"><div class="ic">👥</div><div class="vl">185,000+</div><div class="lb">Active Members</div></div>
+    <div class="stat-lc"><div class="ic">🎁</div><div class="vl">₨400</div><div class="lb">Per Referral</div></div>
+    <div class="stat-lc"><div class="ic">🤖</div><div class="vl">AI Live</div><div class="lb">Auto Trading</div></div>
+  </div>
+</div>
+</div>
+
+<!-- ══════════ AUTH ══════════ -->
+<div class="ov" id="auth-ov">
+<div class="abox">
+  <button class="xb" onclick="closeAuth()"><i class="fa-solid fa-xmark"></i></button>
+  <div class="abox-hd">
+    <div class="abox-ico"><i class="fa-solid fa-flask-vial"></i></div>
+    <h2>Earnify Lab</h2>
+    <p>Secure Access Terminal</p>
+  </div>
+  <div class="atabs">
+    <div class="atab on" id="tl" onclick="swTab('l')">Login</div>
+    <div class="atab" id="tr" onclick="swTab('r')">Register</div>
+  </div>
+  <div id="fl">
+    <div class="fld"><label>Email Address</label><input type="email" id="lem" placeholder="name@email.com"></div>
+    <div class="fld"><label>Password</label><input type="password" id="lpw" placeholder="••••••••"></div>
+    <button class="btn-main btn-auth" onclick="doLogin()"><i class="fa-solid fa-lock"></i> Authorize Login</button>
+  </div>
+  <div id="fr" style="display:none">
+    <div class="fld"><label>Full Name</label><input type="text" id="rnm" placeholder="John Doe"></div>
+    <div class="fld"><label>Email Address</label><input type="email" id="rem" placeholder="name@email.com"></div>
+    <div class="fld"><label>Phone Number</label><input type="text" id="rph" placeholder="03xx xxxxxxx"></div>
+    <div class="fld"><label>Password</label><input type="password" id="rpw" placeholder="Min 6 characters"></div>
+    <div class="fld"><label>Referral Code (Optional)</label><input type="text" id="rref" placeholder="REF-XXXX"></div>
+    <button class="btn-main btn-auth" onclick="doReg()"><i class="fa-solid fa-user-plus"></i> Create Account</button>
+  </div>
+</div>
+</div>
+
+<!-- ── MOBILE BAR ── -->
+<div class="mob-bar">
+  <div style="display:flex;align-items:center;gap:10px">
+    <div class="sb-logo-ic" style="width:30px;height:30px;font-size:14px"><i class="fa-solid fa-flask-vial"></i></div>
+    <div class="sb-brand-name" style="font-size:14px">Earnify <span>Lab</span></div>
+  </div>
+  <button class="mob-toggle" onclick="toggleSB()"><i class="fa-solid fa-bars"></i></button>
+</div>
+
+<!-- ── APP LAYOUT ── -->
+<div class="screen" id="app">
+<div class="sidebar" id="sidebar">
+  <div class="sb-brand">
+    <div class="sb-logo-ic"><i class="fa-solid fa-flask-vial"></i></div>
+    <div class="sb-brand-name">Earnify <span>Lab</span></div>
+  </div>
+  <div class="sb-nav">
+    <a href="#" class="na on" onclick="goPg('dash',this)"><i class="fa-solid fa-house"></i> Dashboard</a>
+    <a href="#" class="na" onclick="goPg('profile',this)"><i class="fa-solid fa-user-circle"></i> Profile</a>
+    <a href="#" class="na" onclick="goPg('aitrade',this)"><i class="fa-solid fa-robot"></i> AI Trading</a>
+    <a href="#" class="na" onclick="goPg('plans',this)"><i class="fa-solid fa-gem"></i> Plans</a>
+    <a href="#" class="na" onclick="goPg('deposit',this)"><i class="fa-solid fa-wallet"></i> Deposit</a>
+    <a href="#" class="na" onclick="goPg('withdraw',this)"><i class="fa-solid fa-money-bill-transfer"></i> Withdraw</a>
+    <a href="#" class="na" onclick="goPg('tasks',this)"><i class="fa-solid fa-tasks"></i> Earning Tasks</a>
+    <a href="#" class="na" onclick="goPg('refer',this)"><i class="fa-solid fa-users-viewfinder"></i> Referrals</a>
+    <a href="#" class="na" onclick="goPg('txns',this)"><i class="fa-solid fa-list-ul"></i> History</a>
+
+
+  </div>
+  <div class="sb-foot">
+    <div class="sb-u">
+      <div class="sb-av" id="sbav">JD</div>
+      <div style="flex:1">
+        <div class="sb-unm" id="sbnm">John Doe</div>
+        <div class="sb-ubl" id="sbbl">₨ 0</div>
+      </div>
+      <button class="sb-out" onclick="doLogout()"><i class="fa-solid fa-power-off"></i></button>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+<!-- ── DASHBOARD ── -->
+<div class="pg on" id="pg-dash">
+  <div class="pghd">
+    <div class="pghd-l"><h1><i class="fa-solid fa-chart-line" style="color:var(--p2)"></i> Overview</h1><div class="sub">Performance metrics</div></div>
+    <div style="display:flex;gap:10px">
+      <button class="btn-sec" onclick="openNotifs()"><i class="fa-solid fa-bell"></i></button>
+    </div>
+  </div>
+
+  <!-- Activation Warning -->
+  <div class="card" id="activation-card" style="display:none; margin-bottom:20px; border:2px solid var(--red); background:rgba(255,59,48,0.05)">
+    <div style="display:flex; justify-content:space-between; align-items:center">
+      <div>
+        <h3 style="color:var(--red); font-weight:800">Account Inactive! \u26A0\uFE0F</h3>
+        <p style="font-size:12px; color:var(--t2)">Pay ₨ 2,000 Activation Fee to start earning and trading.</p>
+      </div>
+      <button class="btn-main" style="background:var(--red); border:none; width:auto; padding:8px 20px" onclick="goPg('deposit')">Activate Now</button>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:20px; background:linear-gradient(135deg, var(--pdim), transparent); border-color:var(--bdp)">
+
+    <div style="display:flex; justify-content:space-between; align-items:center">
+      <div>
+        <h3 style="font-weight:800; color:var(--p2)">Daily Reward Available!</h3>
+        <p style="font-size:12px; color:var(--t2)">Claim your daily check-in bonus now.</p>
+      </div>
+      <button class="btn-main" onclick="doCheckin()">Claim ₨</button>
+    </div>
+  </div>
+  <div class="g4">
+    <div class="card"><div class="chd">Wallet Balance</div><div class="bv gc" id="dwal">₨ 0</div></div>
+    <div class="card"><div class="chd">Total Invested</div><div class="bv pc" id="dinv">₨ 0</div></div>
+    <div class="card"><div class="chd">Referral Bonus</div><div class="bv up">₨ 400</div></div>
+    <div class="card"><div class="chd">Total Profit</div><div class="bv up" id="dprof">₨ 0</div></div>
+  </div>
+  <div class="g2">
+    <div class="card"><div class="chd">Active Investments</div><div id="active-inv-body"></div></div>
+    <div class="card">
+      <div class="chd">Quick Actions</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <button class="btn-sec" onclick="goPg('profile')">Profile</button>
+        <button class="btn-sec" onclick="goPg('plans')">Plans</button>
+        <button class="btn-sec" onclick="goPg('aitrade')">Trade</button>
+        <button class="btn-sec" onclick="goPg('deposit')">Deposit</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── PROFILE ── -->
+<div class="pg" id="pg-profile">
+  <div class="pghd"><div class="pghd-l"><h1><i class="fa-solid fa-user-circle" style="color:var(--p2)"></i> User Profile</h1><div class="sub">Account settings & identity</div></div></div>
+  <div class="g2">
+    <div class="card">
+      <div class="chd">Personal Information</div>
+      <div style="display:flex;align-items:center;gap:20px;margin-bottom:30px">
+        <div id="p-av" style="width:70px;height:70px;background:var(--pdim);color:var(--p2);border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:900">U</div>
+        <div>
+           <h2 id="p-name">User Name</h2>
+           <p id="p-email" style="color:var(--t2);font-size:12px">user@example.com</p>
+        </div>
+      </div>
+      <div class="fld"><label>Full Name</label><input type="text" id="up-name"></div>
+      <div class="fld"><label>Phone Number</label><input type="text" id="up-phone"></div>
+      <button class="btn-main" style="width:100%" onclick="updateProfile()">Save Changes</button>
+    </div>
+    <div class="card">
+      <div class="chd">Security & Referrals</div>
+      <div style="background:var(--s2);padding:20px;border-radius:15px;margin-bottom:20px">
+        <div style="font-size:11px;color:var(--t2);margin-bottom:5px">My Referral Link</div>
+        <div style="font-weight:800;display:flex;justify-content:space-between;align-items:center">
+          <span id="p-code" class="gc" style="font-size:18px">...</span>
+          <button class="atab" style="font-size:11px" onclick="copyRef()">Copy Link</button>
+        </div>
+      </div>
+      <div style="font-size:11px;color:var(--t3);line-height:1.6">Your account is verified. All trades are executed via Earnify's AI Neural Engine with 99.9% precision.</div>
+      <button class="btn-sec" style="width:100%;margin-top:20px;color:var(--red)" onclick="doLogout()">Sign Out</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ── TASKS ── -->
+<div class="pg" id="pg-tasks">
+  <div class="pghd"><div class="pghd-l"><h1><i class="fa-solid fa-star" style="color:var(--gold)"></i> Earning Tasks</h1><div class="sub">Complete tasks to earn real cash</div></div></div>
+  <div class="g2">
+    <div class="card">
+      <div style="display:flex;gap:15px;align-items:center">
+        <div style="font-size:30px">📢</div>
+        <div style="flex:1">
+          <h4 style="margin:0">Subscribe YouTube</h4>
+          <p style="font-size:11px;color:var(--t2);margin:5px 0">Official Earnify Lab Channel</p>
+          <div class="up" style="font-weight:800;font-size:14px">₨ 100 Reward</div>
+        </div>
+        <button class="btn-main" onclick="doTask('yt', 100, 'https://youtube.com')">Do Task</button>
+      </div>
+    </div>
+    <div class="card">
+      <div style="display:flex;gap:15px;align-items:center">
+        <div style="font-size:30px">📱</div>
+        <div style="flex:1">
+          <h4 style="margin:0">Join Telegram</h4>
+          <p style="font-size:11px;color:var(--t2);margin:5px 0">Get latest signals & news</p>
+          <div class="up" style="font-weight:800;font-size:14px">₨ 50 Reward</div>
+        </div>
+        <button class="btn-main" onclick="doTask('tg', 50, 'https://t.me')">Do Task</button>
+      </div>
+    </div>
+    <div class="card">
+      <div style="display:flex;gap:15px;align-items:center">
+        <div style="font-size:30px">🔗</div>
+        <div style="flex:1">
+          <h4 style="margin:0">Share on WhatsApp</h4>
+          <p style="font-size:11px;color:var(--t2);margin:5px 0">Share your referral link</p>
+          <div class="up" style="font-weight:800;font-size:14px">₨ 20 Reward</div>
+        </div>
+        <button class="btn-main" onclick="doTask('wa', 20, 'whatsapp://send?text=Earn%20money%20online!')">Share</button>
+      </div>
+    </div>
+    <div class="card">
+      <div style="display:flex;gap:15px;align-items:center">
+        <div style="font-size:30px">🎁</div>
+        <div style="flex:1">
+          <h4 style="margin:0">Daily Check-in</h4>
+          <p style="font-size:11px;color:var(--t2);margin:5px 0">Get random bonus daily</p>
+          <div class="up" style="font-weight:800;font-size:14px">₨ 10-50</div>
+        </div>
+        <button class="btn-main" onclick="doCheckin()">Claim</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── NOTIFICATIONS OVERLAY ── -->
+<div class="ov" id="notif-ov">
+  <div class="abox" style="max-width:500px">
+    <button class="xb" onclick="closeNotifs()">×</button>
+    <h3><i class="fa-solid fa-bell"></i> Notifications</h3>
+    <div id="notif-body" style="margin-top:20px; max-height:400px; overflow-y:auto; display:flex; flex-direction:column; gap:10px">
+      <p style="text-align:center; color:var(--t2)">Loading alerts...</p>
+    </div>
+  </div>
+</div>
+
+
+<!-- ── AI TRADING ── -->
+<div class="pg" id="pg-aitrade">
+  <div class="pghd">
+    <div class="pghd-l"><h1><i class="fa-solid fa-microchip" style="color:var(--a)"></i> Neural Engine</h1><div class="sub" id="p-sub-pair">BTC/USDT Trading</div></div>
+    <div class="badge by" id="ai-status-badge">Offline</div>
+  </div>
+  
+  <div class="card" style="padding:0; overflow:hidden; background:linear-gradient(to bottom, #0a0b14, #05060a)">
+    <div style="padding:20px; display:flex; justify-content:space-between; align-items:center;">
+      <div>
+        <div id="chart-pair" style="font-weight:800; font-size:18px; letter-spacing:1px">BTC / USDT</div>
+        <div style="font-size:11px; color:var(--t2)">Market: Open</div>
+      </div>
+      <div style="text-align:right">
+        <div id="live-price" style="font-weight:900; color:var(--a); font-size:24px">$0.00</div>
+        <div style="font-size:11px; color:var(--a)">+1.24%</div>
+      </div>
+    </div>
+    <div style="height:300px; width:100%; position:relative">
+      <canvas id="trade-canvas" style="width:100%; height:100%"></canvas>
+    </div>
+    <div id="ai-think" style="display:none; padding:15px; font-size:12px; color:var(--a); text-align:center; background:rgba(0,229,176,0.05); border-top:1px solid var(--bd)">AI Analyzing Liquidity...</div>
+  </div>
+
+  <div class="g2" style="margin-top:20px">
+    <div class="card"><div class="chd">Trade Amount</div><div class="bv" id="trade-active-amt">₨ 0</div></div>
+    <div class="card"><div class="chd">Session P&L</div><div class="bv" id="session-pnl">₨ 0.00</div></div>
+  </div>
+
+  <div class="card" id="ai-controls" style="margin-top:20px">
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px">
+      <div class="fld">
+        <label>Risk Level</label>
+        <select id="trade-risk" class="atab" style="width:100%; background:var(--s2); color:var(--t1); border:1px solid var(--bd); padding:10px; border-radius:10px">
+          <option value="low">Low Risk (Safe)</option>
+          <option value="med" selected>Medium Risk (Optimal)</option>
+          <option value="high">High Risk (Aggressive)</option>
+        </select>
+      </div>
+      <div class="fld">
+        <label>Timeframe</label>
+        <select id="trade-time" class="atab" style="width:100%; background:var(--s2); color:var(--t1); border:1px solid var(--bd); padding:10px; border-radius:10px">
+          <option value="5m">5 Minutes</option>
+          <option value="15m">15 Minutes</option>
+          <option value="1h">1 Hour</option>
+          <option value="1d">1 Day</option>
+        </select>
+      </div>
+    </div>
+    <div class="fld">
+      <label>Select Asset</label>
+      <select id="trade-pair-sel" class="atab" style="width:100%; background:var(--s2); color:var(--t1); border:1px solid var(--bd); padding:12px; border-radius:10px; font-weight:700" onchange="S.selPair=this.value; document.getElementById('chart-pair').textContent=this.value; document.getElementById('p-sub-pair').textContent=this.value + ' Trading'">
+        <option value="BTC/USDT">Bitcoin (BTC/USDT)</option>
+        <option value="XAU/USD">Gold (XAU/USD)</option>
+        <option value="EUR/USD">Forex (EUR/USD)</option>
+        <option value="ETH/USDT">Ethereum (ETH/USDT)</option>
+      </select>
+    </div>
+    <div class="fld"><label>Investment Amount</label><input type="number" id="trade-input" value="500"></div>
+    <button class="btn-main" style="width:100%; justify-content:center; font-weight:800; font-size:16px" onclick="startAI()">Deploy AI Engine</button>
+  </div>
+
+
+  <div id="ai-running" style="display:none; margin-top:20px">
+    <button class="btn-auth" style="width:100%; background:var(--red); border:none; padding:18px; color:#fff; border-radius:12px; font-weight:800; box-shadow:0 10px 20px var(--rdim)" onclick="stopAI()">Stop & Collect Profits</button>
+  </div>
+
+  <div class="card" style="margin-top:20px">
+    <div class="chd">Real-time Signals</div>
+    <div id="trade-log-body" style="font-size:12px; color:var(--t2)">Waiting for market deployment...</div>
+  </div>
+</div>
+
+
+<!-- ── WITHDRAW ── -->
+<div class="pg" id="pg-withdraw">
+  <div class="pghd"><div class="pghd-l"><h1><i class="fa-solid fa-money-bill-transfer" style="color:var(--p2)"></i> Withdraw Funds</h1><div class="sub">Cash out your earnings</div></div></div>
+  <div class="g2">
+    <div class="card">
+      <div class="chd">New Withdrawal Request</div>
+      <div class="fld"><label>Amount</label><input type="number" id="wamt" placeholder="Min ₨ 500"></div>
+      <div class="fld">
+        <label>Payment Method</label>
+        <select id="wmeth" class="atab" style="width:100%; background:var(--s2); color:var(--t1); border:1px solid var(--bd); padding:12px; border-radius:10px">
+          <option>EasyPaisa</option>
+          <option>JazzCash</option>
+        </select>
+      </div>
+      <div class="fld"><label>Account Number</label><input type="text" id="wacc" placeholder="03xx xxxxxxx"></div>
+      <div class="fld"><label>Account Holder Name</label><input type="text" id="wnm" placeholder="Full Name"></div>
+      <button class="btn-main" style="width:100%" onclick="submitWithdrawal()">Request Withdrawal</button>
+    </div>
+    <div class="card">
+      <div class="chd">Withdrawal Policy</div>
+      <ul style="font-size:12px; color:var(--t2); line-height:1.8; padding-left:20px">
+        <li>Minimum withdrawal amount is **₨ 500**.</li>
+        <li>Processing time: 24-48 business hours.</li>
+        <li>Ensure account details are 100% correct.</li>
+        <li>Withdrawals are processed every Monday.</li>
+      </ul>
+      <div style="margin-top:20px; padding:15px; background:rgba(0,229,176,0.1); border-radius:10px; border:1px solid var(--a)">
+        <div style="font-size:11px; color:var(--t2)">Available for withdrawal</div>
+        <div class="bv gc" style="font-size:24px" id="w-avail-bal">₨ 0</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="pg" id="pg-plans">
+  <div class="pghd"><div class="pghd-l"><h1>Investment Plans</h1></div></div>
+  <div class="g3" style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px">
+    <div class="card">
+      <div class="chd">Starter</div><div class="bv pc">8%/Mo</div>
+      <button class="btn-main" style="width:100%;margin-top:20px" onclick="openInv('Starter','8%','6m',0.08,6)">Invest</button>
+    </div>
+    <div class="card">
+      <div class="chd">Premium</div><div class="bv gc">12%/Mo</div>
+      <button class="btn-main" style="width:100%;margin-top:20px" onclick="openInv('Premium','12%','12m',0.12,12)">Invest</button>
+    </div>
+    <div class="card">
+      <div class="chd">VIP</div><div class="bv up">18%/Mo</div>
+      <button class="btn-main" style="width:100%;margin-top:20px" onclick="openInv('VIP','18%','24m',0.18,24)">Invest</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── DEPOSIT ── -->
+<div class="pg" id="pg-deposit">
+  <div class="pghd"><div class="pghd-l"><h1>Deposit Funds</h1></div></div>
+  <div class="card">
+    <div class="pm on" style="padding:15px;background:var(--s2);border-radius:12px;margin-bottom:10px" onclick="selPM(this,'EasyPaisa','03317043890')">EasyPaisa · 03317043890 <button class="btn-sec" style="padding:4px 8px;font-size:10px" onclick="copyNum()">Copy</button></div>
+    <div class="fld"><label>Amount</label><input type="number" id="damt"></div>
+    <div class="fld"><label>Txn ID</label><input type="text" id="dtxn"></div>
+    <div class="fld"><label>Screenshot</label><input type="file" onchange="prevSS(event)"><img id="ss-prev" style="width:100px;display:none;margin-top:10px"></div>
+    <button class="btn-main" style="width:100%;justify-content:center" onclick="subDep()">Submit</button>
+  </div>
+</div>
+
+<!-- ── REFERRALS ── -->
+<div class="pg" id="pg-refer">
+  <div class="pghd"><div class="pghd-l"><h1>Referral Program</h1></div></div>
+  <div class="card">
+    <div class="chd">Referral Link</div>
+    <input type="text" id="reflink" readonly style="width:100%;background:var(--s2);padding:12px;border:none;color:var(--t2);border-radius:10px">
+    <div style="margin-top:20px">Code: <span id="mycode" class="gc"></span></div>
+  </div>
+</div>
+
+<!-- ── HISTORY ── -->
+<div class="pg" id="pg-txns">
+  <div class="pghd"><h1>History</h1></div>
+  <div class="tbl" id="txn-body"></div>
+</div>
+
+</div><!-- main -->
+</div><!-- app -->
+
+<!-- OVERLAYS -->
+<div class="ov" id="inv-ov"><div class="abox"><button class="xb" onclick="closeInv()">×</button><h3 id="inm"></h3><p id="isub"></p><div class="fld"><label>Amount</label><input type="number" id="iamt" oninput="calcR()"></div><div id="rtot" style="font-weight:700">₨ 0</div><button class="btn-main" style="width:100%;margin-top:20px" onclick="goDep()">Deposit</button></div></div>
+<div class="ov" id="wd-ov"><div class="abox"><button class="xb" onclick="closeWD()">×</button><h3>Withdrawal</h3><div class="fld"><label>Amount</label><input type="number" id="wamt"></div><div class="fld"><label>Method</label><select id="wmeth"><option>EasyPaisa</option><option>JazzCash</option></select></div><div class="fld"><label>Account</label><input type="text" id="wacc"></div><div class="fld"><label>Title</label><input type="text" id="wnm"></div><button class="btn-main" style="width:100%" onclick="submitWithdrawal()">Request</button></div></div>
+<div class="ov" id="ssov" onclick="this.classList.remove('on')"><img id="ssview" style="max-width:90%"></div>
+<div class="toast" id="toast"><span id="tmsg"></span></div>
+
+<script>
+  const saved = localStorage.getItem('earnify_session');
+  if (saved) { try { const { user } = JSON.parse(saved); startApp(user); } catch (e) {} }
+
+  window.renderDashboardInvestments = () => {
+    const body = document.getElementById('active-inv-body'); if(!body) return;
+    body.innerHTML = S.investments.length ? '' : 'No plans.';
+    S.investments.forEach(inv => {
+      const d = document.createElement('div'); d.innerHTML = `${inv.plan_name}: ₨${inv.amount} (${inv.status})`;
+      body.appendChild(d);
+    });
+  }
+  window.renderTxns = async () => {
+    const body = document.getElementById('txn-body'); if(!body) return;
+    body.innerHTML = '';
+    S.investments.forEach(t => {
+      const r = document.createElement('div'); r.innerHTML = `${t.plan_name} - ₨${t.amount} - ${t.status}`;
+      body.appendChild(r);
+    });
+  }
+  window.copyRef = () => { navigator.clipboard.writeText(document.getElementById('reflink').value); toast('Copied'); }
+</script>
+
+
+</body>
+</html>

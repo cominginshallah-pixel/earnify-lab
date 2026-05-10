@@ -1,0 +1,1 @@
+"Installation complete. Please install Node.js from https://nodejs.org to run the application." 
